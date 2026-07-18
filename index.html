@@ -18,6 +18,8 @@
             --primary: #ff6b00;
             --primary-hover: #e05e00;
             --border: #333333;
+            --success: #2ec4b6;
+            --danger: #e74c3c;
         }
 
         .light-mode {
@@ -62,25 +64,12 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            padding-top: 10px;
-        }
-
-        .version-tag {
-            font-size: 0.65rem;
-            color: var(--primary);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: absolute;
-            top: -5px;
-            left: -4px;
         }
 
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
             line-height: 1.2;
-            margin-top: -4px;
         }
 
         .nav-tabs {
@@ -110,7 +99,7 @@
             gap: 1rem;
         }
 
-        .toggle-btn, .auth-btn {
+        .gear-btn, .auth-btn {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             color: var(--text-color);
@@ -118,6 +107,15 @@
             border-radius: 5px;
             font-weight: 600;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gear-btn svg {
+            fill: var(--text-color);
+            width: 20px;
+            height: 20px;
         }
 
         .auth-btn {
@@ -173,7 +171,7 @@
             border-bottom: 2px solid var(--primary);
         }
 
-        .search-bar {
+        .search-bar, .select-bar {
             width: 100%;
             padding: 0.75rem;
             background-color: var(--card-bg);
@@ -181,6 +179,11 @@
             border-radius: 5px;
             color: var(--text-color);
             margin-bottom: 1rem;
+        }
+        
+        .select-bar {
+            cursor: pointer;
+            outline: none;
         }
 
         .level-item {
@@ -192,10 +195,16 @@
             margin-bottom: 0.5rem;
             cursor: pointer;
             border: 1px solid transparent;
+            justify-content: space-between;
         }
 
         .level-item:hover, .level-item.active {
-            border-color: var(--primary);
+            border-color: var(--primary) !important;
+        }
+
+        .level-item-left {
+            display: flex;
+            align-items: center;
         }
 
         .level-rank {
@@ -279,17 +288,47 @@
             font-weight: 700;
         }
 
-        #levelID {
-            color: var(--text-color);
+        .completions-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
         }
 
-        .leaderboard-panel {
+        .completions-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .completions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .completion-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .checkmark {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .leaderboard-panel, .admin-panel {
             width: 100%;
             background-color: var(--panel-bg);
             border-radius: 10px;
             padding: 2rem;
             border: 1px solid var(--border);
-            margin-top: 80px;
         }
 
         .leaderboard-table {
@@ -308,6 +347,19 @@
             color: var(--text-muted);
             font-weight: 600;
         }
+
+        .admin-action-btn {
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .btn-approve { background-color: var(--success); }
+        .btn-deny { background-color: var(--danger); }
 
         .toast-notification {
             position: fixed;
@@ -357,6 +409,16 @@
             width: 100%;
             max-width: 400px;
             position: relative;
+        }
+
+        .modal-version-tag {
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-weight: 700;
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            letter-spacing: 0.5px;
         }
 
         .close-modal {
@@ -414,6 +476,15 @@
             cursor: pointer;
         }
 
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
         .hidden { display: none !important; }
     </style>
 
@@ -430,17 +501,21 @@
     <nav class="navbar">
         <div class="nav-left-group">
             <div class="brand-container">
-                <span class="version-tag">Ver 2.01</span>
                 <div class="logo">MagiGDPS Demonlist</div>
             </div>
             <div class="nav-tabs">
                 <button id="tabList" class="nav-btn active" onclick="switchView('list')">DEMONLIST</button>
                 <button id="tabLeaderboard" class="nav-btn" onclick="switchView('leaderboard')">LEADERBOARD</button>
                 <button id="tabSubmitRecord" class="nav-btn" onclick="handleSubmitRecordClick()">SUBMIT A RECORD</button>
+                <button id="tabAdmin" class="nav-btn hidden" onclick="switchView('admin')">REVIEW RECORDS</button>
             </div>
         </div>
         <div class="nav-right">
-            <button class="toggle-btn" onclick="toggleTheme()">Light Mode</button>
+            <button class="gear-btn" onclick="openSettingsModal()" title="Settings">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+            </button>
             <span id="userDisplay" class="hidden" style="font-weight:600; margin-right:10px;"></span>
             <button id="loginBtn" class="auth-btn" onclick="openAuthModal()">Login/Register</button>
         </div>
@@ -466,7 +541,7 @@
                 <div></div>
                 <div class="info-card">
                     <div class="card-label">LIST POINTS</div>
-                    <div class="card-value" id="levelPoints">0</div>
+                    <div class="card-value" id="levelPoints">100</div>
                 </div>
                 <div></div>
 
@@ -481,8 +556,15 @@
                 </div>
 
                 <div class="info-card" onclick="copyToClipboard(document.getElementById('levelID').innerText, this)" style="cursor: pointer;">
-                    <div class="card-label">ID</div>
+                    <div class="card-label">ID:</div>
                     <div class="card-value" id="levelID">253</div>
+                </div>
+            </div>
+
+            <div class="completions-section">
+                <div class="completions-title">Records</div>
+                <div class="completions-list" id="levelCompletions">
+                    <div style="color:var(--text-muted); font-size:0.9rem;">No recorded records.</div>
                 </div>
             </div>
         </div>
@@ -490,7 +572,12 @@
 
     <div id="leaderboardView" class="container hidden">
         <div class="leaderboard-panel">
-            <h2>Top Players</h2>
+            <h2>Leaderboard</h2>
+            <div class="type-selector" style="margin-top: 1rem;">
+                <button id="lbTypeClassic" class="type-btn active" onclick="switchLeaderboardType('classic')">CLASSIC</button>
+                <button id="lbTypePlatformer" class="type-btn" onclick="switchLeaderboardType('platformer')">PLATFORMER</button>
+            </div>
+            <input type="text" id="lbSearchBar" class="search-bar" placeholder="Search players..." oninput="loadLeaderboard()">
             <table class="leaderboard-table">
                 <thead>
                     <tr>
@@ -500,6 +587,24 @@
                     </tr>
                 </thead>
                 <tbody id="leaderboardData"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="adminView" class="container hidden">
+        <div class="admin-panel">
+            <h2>Pending Records Approval</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>PLAYER</th>
+                        <th>LEVEL</th>
+                        <th>TYPE</th>
+                        <th>PROOF LINK</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="adminRecordRequests"></tbody>
             </table>
         </div>
     </div>
@@ -542,14 +647,67 @@
         </div>
     </div>
 
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeSettingsModal()">&times;</button>
+            <h2>Settings</h2>
+            
+            <div class="setting-row">
+                <span style="font-weight: 600;">Theme Mode</span>
+                <button class="toggle-btn auth-btn" style="padding: 0.4rem 0.8rem; margin:0;" onclick="toggleTheme()">Light Mode</button>
+            </div>
+
+            <div id="usernameSettingSection" class="hidden">
+                <div class="form-group">
+                    <label>Change Username (Once per day)</label>
+                    <input type="text" id="settingsUsername" placeholder="New username">
+                </div>
+                <button class="submit-btn" style="margin-top:0.5rem;" onclick="handleUsernameUpdate()">Update Username</button>
+            </div>
+            <div id="usernameSettingNotice" style="font-size:0.85rem; color:var(--text-muted); text-align:center; padding:0.5rem 0;">
+                Log in to change your username.
+            </div>
+
+            <div class="modal-version-tag">Ver 2.71</div>
+        </div>
+    </div>
+
+    <div id="submitRecordModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeSubmitModal()">&times;</button>
+            <h2>Submit a Record</h2>
+            
+            <div class="form-group">
+                <label>Level Category</label>
+                <select id="submitCategory" class="select-bar" style="margin:0;" onchange="updateSubmitDropdown()">
+                    <option value="classic">Classic</option>
+                    <option value="platformer">Platformer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Choose Level</label>
+                <select id="submitLevelSelect" class="select-bar" style="margin:0;"></select>
+            </div>
+
+            <div class="form-group">
+                <label>YouTube Proof Link</label>
+                <input type="text" id="submitVideoLink" placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+
+            <button class="submit-btn" onclick="processRecordSubmission()">SUBMIT</button>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyATvFpB9993bf4AgRSbQnd90o9DGYTSswk",
+            authDomain: "magigdps-demonlist.firebaseapp.com",
+            projectId: "magigdps-demonlist",
+            storageBucket: "magigdps-demonlist.firebasestorage.app",
+            messagingSenderId: "547008874388",
+            appId: "1:547008874388:web:57b74316d3de2c640cb181",
+            measurementId: "G-BCSHBW1HX6"
         };
         
         firebase.initializeApp(firebaseConfig);
@@ -558,40 +716,116 @@
 
         const levelData = {
             classic: [
-                { id: "253", name: "THE HELL ABYSS", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/I1nONp__jb0" },
-                { id: "245", name: "ISOLATION", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/3TyKX97t00E" },
-                { id: "294", name: "Sparkler", author: "NevisMevis", verifier: "NevisMevis", video: "" },
-                { id: "159", name: "Silent Shade", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "" },
-                { id: "188", name: "Super Clubstep", author: "PolarRice", verifier: "PolarRice", video: "" },
-                { id: "334", name: "Artace", author: "Danil12", verifier: "Danil12", video: "" },
-                { id: "195", name: "reminds me of rain", author: "Fish", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/CxiyTVBLMVY" },
-                { id: "215", name: "Society", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/yuIdpGBQ-vI" },
-                { id: "161", name: "Heartbroken Castle", author: "meitneriumgdps", verifier: "meitneriumgdps", video: "" },
-                { id: "129", name: "light room", author: "PolarRice", verifier: "PolarRice", video: "" }
+                { id: "253", name: "THE HELL ABYSS", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/I1nONp__jb0", points: 100 },
+                { id: "245", name: "ISOLATION", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/3TyKX97t00E", points: 90 },
+                { id: "294", name: "Sparkler", author: "NevisMevis", verifier: "NevisMevis", video: "", points: 0 },
+                { id: "159", name: "Silent Shade", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "", points: 0 },
+                { id: "188", name: "Super Clubstep", author: "PolarRice", verifier: "PolarRice", video: "", points: 0 },
+                { id: "334", name: "Artace", author: "Danil12", verifier: "Danil12", video: "", points: 0 },
+                { id: "195", name: "reminds me of rain", author: "Fish", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/CxiyTVBLMVY", points: 40 },
+                { id: "215", name: "Society", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/yuIdpGBQ-vI", points: 30 },
+                { id: "161", name: "Heartbroken Castle", author: "meitneriumgdps", verifier: "meitneriumgdps", video: "", points: 0 },
+                { id: "129", name: "light room", author: "PolarRice", verifier: "PolarRice", video: "", points: 0 }
             ],
             platformer: [
-                { id: "260", name: "Code M", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/9bOflrj5CUE" },
-                { id: "172", name: "Only Up", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "" },
-                { id: "274", name: "The Five", author: "NevisMevis", verifier: "NevisMevis", video: "" }
+                { id: "260", name: "Code M", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/9bOflrj5CUE", points: 100 },
+                { id: "172", name: "Only Up", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "", points: 0 },
+                { id: "274", name: "The Five", author: "NevisMevis", verifier: "NevisMevis", video: "https://www.youtube-nocookie.com/embed/yIi1zT0yxoU", points: 80 }
             ]
         };
 
+        let currentActiveView = 'list';
         let currentListType = 'classic';
+        let currentLeaderboardType = 'classic';
         let activeLevel = levelData.classic[0];
+        let cachedCurrentUsername = "";
+        let approvedLevelsCache = new Set();
 
         function switchView(view) {
+            currentActiveView = view;
+            
             document.getElementById('tabList').classList.toggle('active', view === 'list');
             document.getElementById('tabLeaderboard').classList.toggle('active', view === 'leaderboard');
+            document.getElementById('tabAdmin').classList.toggle('active', view === 'admin');
+            document.getElementById('tabSubmitRecord').classList.remove('active');
+            
             document.getElementById('listView').classList.toggle('hidden', view !== 'list');
             document.getElementById('leaderboardView').classList.toggle('hidden', view !== 'leaderboard');
+            document.getElementById('adminView').classList.toggle('hidden', view !== 'admin');
+            
             if (view === 'leaderboard') loadLeaderboard();
+            if (view === 'admin') loadAdminDashboard();
+            if (view === 'list') renderList();
         }
 
         function handleSubmitRecordClick() {
             if (!auth.currentUser) {
                 document.getElementById('authModal').style.display = 'flex';
                 toggleAuthState(true);
+            } else {
+                updateSubmitDropdown();
+                
+                document.getElementById('tabList').classList.remove('active');
+                document.getElementById('tabLeaderboard').classList.remove('active');
+                document.getElementById('tabAdmin').classList.remove('active');
+                document.getElementById('tabSubmitRecord').classList.add('active');
+                
+                document.getElementById('submitRecordModal').style.display = 'flex';
             }
+        }
+
+        function restoreActiveTab() {
+            document.getElementById('tabSubmitRecord').classList.remove('active');
+            document.getElementById('tabList').classList.toggle('active', currentActiveView === 'list');
+            document.getElementById('tabLeaderboard').classList.toggle('active', currentActiveView === 'leaderboard');
+            document.getElementById('tabAdmin').classList.toggle('active', currentActiveView === 'admin');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submitRecordModal').style.display = 'none';
+            restoreActiveTab();
+        }
+
+        function updateSubmitDropdown() {
+            const cat = document.getElementById('submitCategory').value;
+            const dropdown = document.getElementById('submitLevelSelect');
+            dropdown.innerHTML = '';
+            levelData[cat].forEach(lvl => {
+                const opt = document.createElement('option');
+                opt.value = lvl.name;
+                opt.textContent = lvl.name;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        function processRecordSubmission() {
+            const category = document.getElementById('submitCategory').value;
+            const chosenLevelName = document.getElementById('submitLevelSelect').value;
+            const videoLink = document.getElementById('submitVideoLink').value.trim();
+
+            if (!videoLink.includes('youtube.com') && !videoLink.includes('youtu.be')) {
+                return alert("Please enter a valid YouTube link.");
+            }
+
+            const targetLvlData = levelData[category].find(l => l.name === chosenLevelName);
+
+            db.collection('records').add({
+                uid: auth.currentUser.uid,
+                username: cachedCurrentUsername,
+                levelName: chosenLevelName,
+                levelType: category,
+                pointsValue: targetLvlData.points,
+                video: videoLink,
+                status: 'pending',
+                submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert("Record submitted successfully! Awaiting review.");
+                document.getElementById('submitVideoLink').value = '';
+                closeSubmitModal();
+            }).catch(err => {
+                alert(err.message);
+                restoreActiveTab();
+            });
         }
 
         function switchListType(type) {
@@ -599,6 +833,32 @@
             document.getElementById('typeClassic').classList.toggle('active', type === 'classic');
             document.getElementById('typePlatformer').classList.toggle('active', type === 'platformer');
             renderList();
+        }
+
+        function switchLeaderboardType(type) {
+            currentLeaderboardType = type;
+            document.getElementById('lbTypeClassic').classList.toggle('active', type === 'classic');
+            document.getElementById('lbTypePlatformer').classList.toggle('active', type === 'platformer');
+            loadLeaderboard();
+        }
+
+        function fetchUserCompletionsCache(uid) {
+            if (!uid) {
+                approvedLevelsCache.clear();
+                renderList();
+                return;
+            }
+            db.collection('records')
+                .where('uid', '==', uid)
+                .where('status', '==', 'approved')
+                .get()
+                .then(snapshot => {
+                    approvedLevelsCache.clear();
+                    snapshot.docs.forEach(doc => {
+                        approvedLevelsCache.add(doc.data().levelName);
+                    });
+                    renderList();
+                });
         }
 
         function renderList() {
@@ -618,7 +878,17 @@
             filteredLevels.forEach((item) => {
                 const div = document.createElement('div');
                 div.className = `level-item ${activeLevel && activeLevel.name === item.data.name ? 'active' : ''}`;
-                div.innerHTML = `<span class="level-rank">#${item.globalRank}</span><span class="level-name">${item.data.name}</span>`;
+                
+                const hasBeaten = approvedLevelsCache.has(item.data.name);
+                const checkmarkMarkup = hasBeaten ? `<span class="checkmark" style="margin-left:auto;">✓</span>` : '';
+
+                div.innerHTML = `
+                    <div class="level-item-left">
+                        <span class="level-rank">#${item.globalRank}</span>
+                        <span class="level-name">${item.data.name}</span>
+                    </div>
+                    ${checkmarkMarkup}
+                `;
                 div.onclick = () => selectLevel(item.data);
                 listContainer.appendChild(div);
             });
@@ -626,20 +896,65 @@
 
         function selectLevel(level) {
             activeLevel = level;
-            renderList();
 
             document.getElementById('levelTitle').innerText = level.name;
             document.getElementById('levelID').innerText = level.id;
             document.getElementById('levelAuthor').innerText = level.author;
             document.getElementById('levelVerifier').innerText = level.verifier;
-            document.getElementById('levelPoints').innerText = 0;
+            document.getElementById('levelPoints').innerText = level.points;
 
             const videoWrapper = document.getElementById('videoWrapper');
             if (level.video) {
-                videoWrapper.innerHTML = `<iframe src="${level.video}" allowfullscreen></iframe>`;
+                let embedUrl = level.video;
+                if(embedUrl.includes('watch?v=')) {
+                    embedUrl = embedUrl.replace('watch?v=', 'embed/');
+                } else if(embedUrl.includes('youtu.be/')) {
+                    embedUrl = embedUrl.replace('youtu.be/', 'www.youtube-nocookie.com/embed/');
+                }
+                videoWrapper.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
             } else {
                 videoWrapper.innerHTML = `<div class="no-video">No video available</div>`;
             }
+
+            // Sync visual active class elements on current UI lists safely
+            const items = document.querySelectorAll('.level-item');
+            items.forEach(el => {
+                const nameSpan = el.querySelector('.level-name');
+                if (nameSpan && nameSpan.innerText === level.name) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            loadLevelCompletions(level.name);
+        }
+
+        function loadLevelCompletions(levelName) {
+            const compList = document.getElementById('levelCompletions');
+            compList.innerHTML = '<div style="color:var(--text-muted); font-size:0.9rem;">Loading records...</div>';
+
+            db.collection('records')
+                .where('levelName', '==', levelName)
+                .where('status', '==', 'approved')
+                .get()
+                .then(snapshot => {
+                    compList.innerHTML = '';
+                    if (snapshot.empty) {
+                        compList.innerHTML = '<div style="color:var(--text-muted); font-size:0.9rem;">No approved records yet.</div>';
+                        return;
+                    }
+                    snapshot.docs.forEach(doc => {
+                        const rData = doc.data();
+                        const div = document.createElement('div');
+                        div.className = 'completion-item';
+                        div.innerHTML = `
+                            <span>${rData.username}</span>
+                            <a href="${rData.video}" target="_blank" style="color:var(--primary); font-size:0.85rem; text-decoration:none;">Video Proof</a>
+                        `;
+                        compList.appendChild(div);
+                    });
+                });
         }
 
         let toastTimeout;
@@ -675,6 +990,17 @@
             document.getElementById('authModal').style.display = 'none';
         }
 
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            const isUser = !!auth.currentUser;
+            document.getElementById('usernameSettingSection').classList.toggle('hidden', !isUser);
+            document.getElementById('usernameSettingNotice').classList.toggle('hidden', isUser);
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
         function toggleAuthState(showLogin) {
             document.getElementById('loginState').classList.toggle('hidden', !showLogin);
             document.getElementById('registerState').classList.toggle('hidden', showLogin);
@@ -683,23 +1009,36 @@
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
-            document.querySelector('.toggle-btn').innerText = isLight ? 'Dark Mode' : 'Light Mode';
+            document.querySelector('.setting-row .toggle-btn').innerText = isLight ? 'Dark Mode' : 'Light Mode';
         }
 
         auth.onAuthStateChanged(user => {
             const loginBtn = document.getElementById('loginBtn');
             const userDisplay = document.getElementById('userDisplay');
+            const adminTab = document.getElementById('tabAdmin');
             
             if (user) {
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const username = doc.exists ? doc.data().username : "Player";
+                    cachedCurrentUsername = username;
                     userDisplay.innerText = username;
                     userDisplay.classList.remove('hidden');
                     loginBtn.textContent = "Logout";
+
+                    if (username === "UltraGamer3500") {
+                        adminTab.classList.remove('hidden');
+                    } else {
+                        adminTab.classList.add('hidden');
+                    }
+                    fetchUserCompletionsCache(user.uid);
                 });
             } else {
+                cachedCurrentUsername = "";
                 userDisplay.classList.add('hidden');
+                adminTab.classList.add('hidden');
                 loginBtn.textContent = "Login/Register";
+                fetchUserCompletionsCache(null);
+                switchView('list');
             }
         });
 
@@ -714,12 +1053,12 @@
                 .then(cred => {
                     return db.collection('users').doc(cred.user.uid).set({
                         username: username,
-                        points: 0
+                        points: 0,
+                        platformerPoints: 0,
+                        lastUsernameChange: null
                     });
                 })
-                .then(() => {
-                    closeAuthModal();
-                })
+                .then(() => closeAuthModal())
                 .catch(err => alert(err.message));
         }
 
@@ -732,30 +1071,151 @@
                 .catch(err => alert(err.message));
         }
 
+        function handleUsernameUpdate() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const newName = document.getElementById('settingsUsername').value.trim();
+            if (!newName) return alert("Please enter a valid username.");
+
+            const userDocRef = db.collection('users').doc(user.uid);
+
+            userDocRef.get().then(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const now = new Date();
+
+                    if (data.lastUsernameChange) {
+                        const lastChange = data.lastUsernameChange.toDate();
+                        const hoursPassed = (now - lastChange) / (1000 * 60 * 60);
+
+                        if (hoursPassed < 24) {
+                            const hoursLeft = Math.ceil(24 - hoursPassed);
+                            alert(`You can only change your username once every 24 hours. Please wait ${hoursLeft} more hour(s).`);
+                            return;
+                        }
+                    }
+
+                    userDocRef.update({
+                        username: newName,
+                        lastUsernameChange: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        cachedCurrentUsername = newName;
+                        document.getElementById('userDisplay').innerText = newName;
+                        document.getElementById('settingsUsername').value = '';
+                        alert("Username successfully updated!");
+                        closeSettingsModal();
+                    }).catch(err => alert(err.message));
+                }
+            });
+        }
+
         function loadLeaderboard() {
             const tableBody = document.getElementById('leaderboardData');
+            const searchFilter = document.getElementById('lbSearchBar').value.toLowerCase();
             tableBody.innerHTML = '<tr><td colspan="3">Loading rankings...</td></tr>';
 
-            db.collection('users').orderBy('points', 'desc').get().then(snapshot => {
+            const pointsField = currentLeaderboardType === 'platformer' ? 'platformerPoints' : 'points';
+
+            db.collection('users').orderBy(pointsField, 'desc').get().then(snapshot => {
                 tableBody.innerHTML = '';
                 if(snapshot.empty) {
                     tableBody.innerHTML = '<tr><td colspan="3">No players registered yet.</td></tr>';
                     return;
                 }
-                snapshot.docs.forEach((doc, index) => {
+
+                let currentRank = 1;
+                snapshot.docs.forEach((doc) => {
                     const data = doc.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><strong>#${index + 1}</strong></td>
-                        <td>${data.username}</td>
-                        <td>${data.points || 0}</td>
+                    const username = data.username || "Player";
+                    const points = data[pointsField] || 0;
+
+                    if (username.toLowerCase().includes(searchFilter)) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>#${currentRank}</strong></td>
+                            <td>${username}</td>
+                            <td>${points}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+                    currentRank++;
+                });
+
+                if (tableBody.innerHTML === '') {
+                    tableBody.innerHTML = '<tr><td colspan="3">No matching players found.</td></tr>';
+                }
+            });
+        }
+
+        function loadAdminDashboard() {
+            const tbody = document.getElementById('adminRecordRequests');
+            tbody.innerHTML = '<tr><td colspan="5">Loading requested submissions...</td></tr>';
+
+            db.collection('records').where('status', '==', 'pending').get().then(snapshot => {
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5">No pending records to review. Good job!</td></tr>';
+                    return;
+                }
+
+                snapshot.docs.forEach(doc => {
+                    const rec = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${rec.username}</td>
+                        <td>${rec.levelName}</td>
+                        <td style="text-transform:uppercase; font-size:0.85rem;">${rec.levelType}</td>
+                        <td><a href="${rec.video}" target="_blank" style="color:var(--primary); text-decoration:none;">Video Proof</a></td>
+                        <td>
+                            <button class="admin-action-btn btn-approve" onclick="reviewRecord('${doc.id}', 'approve')">Approve</button>
+                            <button class="admin-action-btn btn-deny" onclick="reviewRecord('${doc.id}', 'deny')">Deny</button>
+                        </td>
                     `;
-                    tableBody.appendChild(row);
+                    tbody.appendChild(tr);
                 });
             });
         }
 
-        renderList();
+        function reviewRecord(docId, decision) {
+            const recordRef = db.collection('records').doc(docId);
+
+            recordRef.get().then(doc => {
+                if (!doc.exists) return;
+                const recData = doc.data();
+
+                if (decision === 'approve') {
+                    const pointsField = recData.levelType === 'platformer' ? 'platformerPoints' : 'points';
+                    const userRef = db.collection('users').doc(recData.uid);
+
+                    db.runTransaction(transaction => {
+                        return transaction.get(userRef).then(userDoc => {
+                            if (!userDoc.exists) return;
+                            const currentPoints = userDoc.data()[pointsField] || 0;
+                            const newPoints = currentPoints + (recData.pointsValue || 0);
+
+                            transaction.update(userRef, { [pointsField]: newPoints });
+                            transaction.update(recordRef, { status: 'approved' });
+                        });
+                    }).then(() => {
+                        alert("Record approved and points awarded!");
+                        if (auth.currentUser) {
+                            fetchUserCompletionsCache(auth.currentUser.uid);
+                        }
+                        loadAdminDashboard();
+                        selectLevel(activeLevel);
+                    }).catch(err => alert(err.message));
+                } else {
+                    recordRef.update({ status: 'denied' }).then(() => {
+                        alert("Record rejected.");
+                        loadAdminDashboard();
+                    }).catch(err => alert(err.message));
+                }
+            });
+        }
+
+        // Initialize display
+        selectLevel(levelData.classic[0]);
     </script>
 </body>
 </html>
