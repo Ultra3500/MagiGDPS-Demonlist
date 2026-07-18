@@ -4,741 +4,759 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MagiGDPS Demonlist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg-color: #121212;
-            --container-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --accent-color: #ff6b00;
-            --muted-color: #aaaaaa;
-            --border-color: #333333;
+            --panel-bg: #1e1e1e;
             --card-bg: #252525;
-            --hover-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --primary: #ff6b00;
+            --primary-hover: #e05e00;
+            --border: #333333;
         }
 
-        [data-theme="light"] {
-            --bg-color: #f4f4f4;
-            --container-bg: #ffffff;
-            --text-color: #222222;
-            --accent-color: #e65c00;
-            --muted-color: #666666;
-            --border-color: #dddddd;
+        .light-mode {
+            --bg-color: #f5f5f5;
+            --panel-bg: #ffffff;
             --card-bg: #eaeaea;
-            --hover-bg: #dddddd;
+            --text-color: #121212;
+            --text-muted: #666666;
+            --border: #cccccc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Lexend', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            transition: background-color 0.2s, color 0.2s;
+            overflow-x: hidden;
         }
 
-        /* Top Navbar */
         .navbar {
             display: flex;
+            align-items: center;
+            background-color: var(--panel-bg);
+            padding: 1rem 2rem;
+            border-bottom: 2px solid var(--border);
             justify-content: space-between;
-            align-items: center;
-            background-color: var(--container-bg);
-            padding: 15px 30px;
-            border-bottom: 1px solid var(--border-color);
         }
 
-        .navbar h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-controls {
+        .nav-left-group {
             display: flex;
-            gap: 15px;
             align-items: center;
+            gap: 2rem;
         }
 
-        .main-tabs {
-            display: flex;
-            gap: 10px;
-        }
-
-        .main-tab-btn {
-            background: none;
-            border: none;
-            color: var(--muted-color);
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            text-transform: uppercase;
-            border-radius: 4px;
-        }
-
-        .main-tab-btn.active {
-            background-color: var(--accent-color);
-            color: #ffffff;
-        }
-
-        button.ui-btn {
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        button.ui-btn:hover {
-            background-color: var(--hover-bg);
-        }
-
-        /* Main Workspace Content Containers */
-        .content-area {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Split Screen for Demonlist */
-        .split-layout {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: 25px;
-            height: calc(100vh - 140px);
-        }
-
-        /* Left Side List Area */
-        .list-panel {
+        .brand-container {
             display: flex;
             flex-direction: column;
-            background-color: var(--container-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
+            position: relative;
+            padding-top: 10px;
         }
 
-        .list-header {
-            padding: 15px;
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sub-tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 12px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .sub-tab-btn {
-            background: none;
-            border: none;
-            color: var(--muted-color);
-            padding: 8px 16px;
-            font-size: 14px;
+        .version-tag {
+            font-size: 0.65rem;
+            color: var(--primary);
             font-weight: 700;
-            cursor: pointer;
             text-transform: uppercase;
-            border-bottom: 3px solid transparent;
-        }
-
-        .sub-tab-btn.active {
-            color: var(--accent-color);
-            border-bottom-color: var(--accent-color);
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px 12px;
-            box-sizing: border-box;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .scrollable-list {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .list-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: border-color 0.15s, background-color 0.15s;
-        }
-
-        .list-item:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .list-item.selected {
-            border-color: var(--accent-color);
-            background-color: var(--hover-bg);
-        }
-
-        .item-rank {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--accent-color);
-            width: 45px;
-        }
-
-        .item-name {
-            font-size: 15px;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        /* Right Side View Area */
-        .showcase-panel {
-            background-color: var(--container-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            background-color: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 25px;
-            border: 1px solid var(--border-color);
-        }
-
-        .video-wrapper iframe {
+            letter-spacing: 0.5px;
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: -5px;
+            left: -4px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-top: -4px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.4rem; /* Brought tabs closer together */
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.5rem 0.9rem;
+            border-radius: 5px;
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-btn, .auth-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-btn {
+            background-color: var(--primary);
+            color: white;
             border: none;
         }
 
-        .no-video-placeholder {
+        .auth-btn:hover {
+            background-color: var(--primary-hover);
+            border: none;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            padding: 2rem;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+        }
+
+        .list-panel {
+            flex: 1;
+            background-color: var(--panel-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .type-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .type-btn.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .search-bar {
             width: 100%;
-            height: 250px;
+            padding: 0.75rem;
             background-color: var(--card-bg);
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .level-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .level-item:hover, .level-item.active {
+            border-color: var(--primary);
+        }
+
+        .level-rank {
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 1rem;
+            width: 30px;
+        }
+
+        .level-name {
+            font-weight: 600;
+        }
+
+        .showcase-panel {
+            flex: 2;
+            background-color: var(--panel-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .video-container iframe, .no-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .no-video {
             display: flex;
             justify-content: center;
             align-items: center;
-            color: var(--muted-color);
-            font-weight: 500;
-            margin-bottom: 25px;
+            color: var(--text-muted);
+            font-weight: 600;
+            background-color: #151515;
         }
 
-        .level-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-
-        .level-main-info h2 {
-            margin: 0;
-            font-size: 32px;
-            font-weight: 700;
-        }
-
-        .stats-grid {
+        .level-info-cards {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 5px;
+            gap: 1rem;
         }
 
-        .stat-card {
+        .info-card {
             background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 6px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
             text-align: center;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--muted-color);
-            font-weight: 600;
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            font-size: 20px;
-            font-weight: 700;
+            transition: opacity 0.15s ease, transform 0.1s ease;
         }
         
-        .stat-value.points-val {
-            color: var(--accent-color);
+        .info-card:active {
+            transform: scale(0.98);
         }
 
-        /* Leaderboard Table View */
+        .card-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        #levelID {
+            color: var(--text-color);
+        }
+
         .leaderboard-panel {
-            background-color: var(--container-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 30px;
+            width: 100%;
+            background-color: var(--panel-bg);
+            border-radius: 10px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            margin-top: 80px;
         }
 
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1rem;
         }
 
         .leaderboard-table th, .leaderboard-table td {
-            padding: 16px;
+            padding: 1rem 0rem;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border);
         }
 
         .leaderboard-table th {
-            font-size: 14px;
-            text-transform: uppercase;
-            color: var(--muted-color);
+            color: var(--text-muted);
             font-weight: 600;
         }
 
-        /* Auth Modals */
+        .toast-notification {
+            position: fixed;
+            top: -100px;
+            right: 2rem;
+            background-color: var(--card-bg);
+            border: 2px solid var(--primary);
+            color: var(--text-color);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast-notification.show {
+            top: 2rem;
+        }
+
+        .toast-checkmark {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
 
         .modal-content {
-            background-color: var(--container-bg);
-            padding: 30px;
-            border-radius: 6px;
+            background-color: var(--panel-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
             width: 100%;
-            max-width: 360px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.3);
-            border: 1px solid var(--border-color);
+            max-width: 400px;
+            position: relative;
         }
 
-        .modal-content h2 {
-            margin: 0 0 20px 0;
-            font-size: 24px;
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
+            padding: 0.75rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 5px;
             color: var(--text-color);
         }
 
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+        .submit-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
         }
 
         .switch-auth {
-            font-size: 13px;
-            color: var(--muted-color);
-            background: none;
-            border: none;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
             cursor: pointer;
-            padding: 0;
-            text-decoration: underline;
         }
+
+        .hidden { display: none !important; }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
-<body data-theme="dark">
+<body>
 
-    <!-- Top Navigation Bar -->
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 30px;">
-            <h1>MagiGDPS Demonlist</h1>
-            <div class="main-tabs">
-                <button class="main-tab-btn active" onclick="switchMainTab('list-tab-content')">Demonlist</button>
-                <button class="main-tab-btn" onclick="switchMainTab('leaderboard-tab-content')">Leaderboard</button>
+    <div id="copyToast" class="toast-notification">
+        <span class="toast-checkmark">✓</span> Copied to Clipboard!
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-left-group">
+            <div class="brand-container">
+                <span class="version-tag">Ver 2.0</span>
+                <div class="logo">MagiGDPS Demonlist</div>
+            </div>
+            <div class="nav-tabs">
+                <button id="tabList" class="nav-btn active" onclick="switchView('list')">DEMONLIST</button>
+                <button id="tabLeaderboard" class="nav-btn" onclick="switchView('leaderboard')">LEADERBOARD</button>
+                <button id="tabSubmitRecord" class="nav-btn" onclick="handleSubmitRecordClick()">SUBMIT A RECORD</button>
             </div>
         </div>
-        <div class="nav-controls">
-            <button class="ui-btn" id="theme-toggle">Light Mode</button>
-            <div id="auth-status-container">
-                <button class="ui-btn" id="login-btn">Login / Register</button>
-                <span id="user-display" style="display: none; margin-right: 12px; font-weight: 600; font-size: 14px;"></span>
-                <button class="ui-btn" id="logout-btn" style="display: none;">Logout</button>
+        <div class="nav-right">
+            <button class="toggle-btn" onclick="toggleTheme()">Light Mode</button>
+            <span id="userDisplay" class="hidden" style="font-weight:600; margin-right:10px;"></span>
+            <button id="loginBtn" class="auth-btn" onclick="openAuthModal()">Login/Register</button>
+        </div>
+    </nav>
+
+    <div id="listView" class="container">
+        <div class="list-panel">
+            <div class="type-selector">
+                <button id="typeClassic" class="type-btn active" onclick="switchListType('classic')">CLASSIC</button>
+                <button id="typePlatformer" class="type-btn" onclick="switchListType('platformer')">PLATFORMER</button>
+            </div>
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search levels..." oninput="renderList()">
+            <div id="listItems"></div>
+        </div>
+
+        <div class="showcase-panel">
+            <h2 id="levelTitle" style="text-transform: uppercase;">THE HELL ABYSS</h2>
+            <div class="video-container" id="videoWrapper">
+                <iframe src="https://www.youtube-nocookie.com/embed/S_B7_bY95Zg" allowfullscreen></iframe>
+            </div>
+            
+            <div class="level-info-cards">
+                <div></div>
+                <div class="info-card">
+                    <div class="card-label">LIST POINTS</div>
+                    <div class="card-value" id="levelPoints">0</div>
+                </div>
+                <div></div>
+
+                <div class="info-card" onclick="copyToClipboard(document.getElementById('levelAuthor').innerText, this)" style="cursor: pointer;">
+                    <div class="card-label">PUBLISHED BY</div>
+                    <div class="card-value" id="levelAuthor">UltraGamer3500</div>
+                </div>
+
+                <div class="info-card" onclick="copyToClipboard(document.getElementById('levelVerifier').innerText, this)" style="cursor: pointer;">
+                    <div class="card-label">VERIFIED BY</div>
+                    <div class="card-value" id="levelVerifier">UltraGamer3500</div>
+                </div>
+
+                <div class="info-card" onclick="copyToClipboard(document.getElementById('levelID').innerText, this)" style="cursor: pointer;">
+                    <div class="card-label">ID</div>
+                    <div class="card-value" id="levelID">253</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="content-area">
-        
-        <!-- Tab 1: Demonlist Layout System -->
-        <div id="list-tab-content" class="tab-content active">
-            <div class="split-layout">
-                
-                <!-- Left panel lists out all matching records -->
-                <div class="list-panel">
-                    <div class="list-header">
-                        <div class="sub-tabs">
-                            <button class="sub-tab-btn active" id="btn-classic" onclick="setListMode('classic')">Classic</button>
-                            <button class="sub-tab-btn" id="btn-platformer" onclick="setListMode('platformer')">Platformer</button>
-                        </div>
-                        <div class="search-box">
-                            <input type="text" id="list-search" placeholder="Search levels...">
-                        </div>
-                    </div>
-                    <div class="scrollable-list" id="levels-list-container">
-                        <!-- Populated by engine -->
-                    </div>
-                </div>
-
-                <!-- Right panel presents clean video showcase -->
-                <div class="showcase-panel" id="showcase-view-panel">
-                    <!-- Loaded dynamically context maps here -->
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Tab 2: Global Stats Leaderboard -->
-        <div id="leaderboard-tab-content" class="tab-content">
-            <div class="leaderboard-panel">
-                <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">Rank</th>
-                            <th>Player</th>
-                            <th style="text-align: right;">Points</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboard-container">
-                        <tr>
-                            <td colspan="3" style="text-align: center; color: var(--muted-color);">Loading dynamic placements...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div id="leaderboardView" class="container hidden">
+        <div class="leaderboard-panel">
+            <h2>Top Players</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>RANK</th>
+                        <th>PLAYER</th>
+                        <th>POINTS</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardData"></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Login/Register Overlay -->
-    <div id="auth-modal" class="modal">
+    <div id="authModal" class="modal">
         <div class="modal-content">
-            <h2 id="modal-title">Login</h2>
-            <form id="auth-form">
-                <div class="form-group" id="username-group" style="display: none;">
-                    <label for="auth-username">GDPS Username</label>
-                    <input type="text" id="auth-username" autocomplete="username">
+            <button class="close-modal" onclick="closeAuthModal()">&times;</button>
+            
+            <div id="loginState">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail">
                 </div>
                 <div class="form-group">
-                    <label for="auth-email">Email</label>
-                    <input type="email" id="auth-email" required autocomplete="email">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword">
+                </div>
+                <button class="submit-btn" onclick="handleLogin()">Login</button>
+                <div class="switch-auth" onclick="toggleAuthState(false)">Don't have an account? Register</div>
+            </div>
+
+            <div id="registerState" class="hidden">
+                <h2>Register</h2>
+                <div class="form-group">
+                    <label>GDPS Username</label>
+                    <input type="text" id="regUsername">
                 </div>
                 <div class="form-group">
-                    <label for="auth-password">Password</label>
-                    <input type="password" id="auth-password" required autocomplete="current-password">
+                    <label>Email</label>
+                    <input type="email" id="regEmail">
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
-                    <button type="button" id="toggle-auth-type" class="switch-auth">Don't have an account? Register</button>
-                    <div class="modal-actions">
-                        <button type="button" id="close-modal-btn">Cancel</button>
-                        <button type="submit" id="submit-auth-btn" class="ui-btn">Sign In</button>
-                    </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword">
                 </div>
-            </form>
+                <button class="submit-btn" onclick="handleRegister()">Create Account</button>
+                <div class="switch-auth" onclick="toggleAuthState(true)">Already have an account? Login</div>
+            </div>
         </div>
     </div>
 
-    <!-- Firebase SDK Configurations Modules -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+    <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyATvFpB9993bf4AgRSbQnd90o9DGYTSswk",
-            authDomain: "magigdps-demonlist.firebaseapp.com",
-            projectId: "magigdps-demonlist",
-            storageBucket: "magigdps-demonlist.firebasestorage.app",
-            messagingSenderId: "547008874388",
-            appId: "1:547008874388:web:57b74316d3de2c640cb181",
-            measurementId: "G-BCSHBW1HX6"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const levelData = {
+            classic: [
+                { id: "253", name: "THE HELL ABYSS", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/S_B7_bY95Zg" },
+                { id: "245", name: "ISOLATION", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/eorFm5S_6w0" },
+                { id: "294", name: "Sparkler", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/S0wMv_RstB8" },
+                { id: "159", name: "Silent Shade", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/Lnd0h_vVv4c" },
+                { id: "188", name: "Super Clubstep", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/H88KqZ6x7C0" },
+                { id: "334", name: "Artace", author: "Danil12", verifier: "Danil12", video: "" },
+                { id: "195", name: "reminds me of rain", author: "Fish", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/CxiyTVBLMVY" },
+                { id: "215", name: "Society", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/yuIdpGBQ-vI" },
+                { id: "161", name: "Heartbroken Castle", author: "meitneriumgdps", verifier: "meitneriumgdps", video: "" },
+                { id: "129", name: "light room", author: "PolarRice", verifier: "PolarRice", video: "" }
+            ],
+            platformer: [
+                { id: "260", name: "Code M", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/9bOflrj5CUE" },
+                { id: "172", name: "Only Up", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "" },
+                { id: "274", name: "The Five", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/yIi1zT0yxoU" }
+            ]
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        let currentListType = 'classic';
+        let activeLevel = levelData.classic[0];
 
-        // All video URLs have been accurately mapped or marked null for fallbacks
-        const classicDemons = [
-            { rank: 1, name: "THE HELL ABYSS", publisher: "UltraGamer3500", verifier: "UltraGamer3500", points: 0, video: "https://www.youtube-nocookie.com/embed/I1nONp__jb0" },
-            { rank: 2, name: "ISOLATION", publisher: "UltraGamer3500", verifier: "UltraGamer3500", points: 0, video: "https://www.youtube-nocookie.com/embed/3TyKX97t00E" },
-            { rank: 3, name: "Sparkler", publisher: "NevisMevis", verifier: "NevisMevis", points: 0, video: null },
-            { rank: 4, name: "Silent Shade", publisher: "UltraGamer3500", verifier: "UltraGamer3500", points: 0, video: null },
-            { rank: 5, name: "Super Clubstep", publisher: "PolarRice", verifier: "PolarRice", points: 0, video: null }
-        ];
+        function switchView(view) {
+            document.getElementById('tabList').classList.toggle('active', view === 'list');
+            document.getElementById('tabLeaderboard').classList.toggle('active', view === 'leaderboard');
+            document.getElementById('listView').classList.toggle('hidden', view !== 'list');
+            document.getElementById('leaderboardView').classList.toggle('hidden', view !== 'leaderboard');
+            if (view === 'leaderboard') loadLeaderboard();
+        }
 
-        const platformerDemons = [
-            { rank: 1, name: "Code M", publisher: "UltraGamer3500", verifier: "UltraGamer3500", points: 0, video: "https://www.youtube-nocookie.com/embed/9bOflrj5CUE" },
-            { rank: 2, name: "Only Up", publisher: "UltraGamer3500", verifier: "UltraGamer3500", points: 0, video: null },
-            { rank: 3, name: "The Five", publisher: "NevisMevis", verifier: "NevisMevis", points: 0, video: "https://www.youtube-nocookie.com/embed/yIi1zT0yxoU" }
-        ];
+        function handleSubmitRecordClick() {
+            if (!auth.currentUser) {
+                // Modified: Now forces directly open into the LOGIN module panel template layout
+                document.getElementById('authModal').style.display = 'flex';
+                toggleAuthState(true);
+            }
+        }
 
-        let currentMode = 'classic';
-        let selectedLevel = null;
-        let searchQuery = '';
+        function switchListType(type) {
+            currentListType = type;
+            document.getElementById('typeClassic').classList.toggle('active', type === 'classic');
+            document.getElementById('typePlatformer').classList.toggle('active', type === 'platformer');
+            renderList();
+        }
 
-        // --- APP WORKSPACE LOGIC CONTROLLERS ---
-        window.switchMainTab = function(tabContentId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.main-tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabContentId).classList.add('active');
-            
-            const targetedBtnText = tabContentId === 'list-tab-content' ? 'Demonlist' : 'Leaderboard';
-            const targetedBtn = Array.from(document.querySelectorAll('.main-tab-btn')).find(btn => btn.textContent === targetedBtnText);
-            if (targetedBtn) targetedBtn.classList.add('active');
-        };
+        function renderList() {
+            const listContainer = document.getElementById('listItems');
+            const searchQuery = document.getElementById('searchBar').value.toLowerCase();
+            listContainer.innerHTML = '';
 
-        window.setListMode = function(mode) {
-            currentMode = mode;
-            document.getElementById('btn-classic').classList.toggle('active', mode === 'classic');
-            document.getElementById('btn-platformer').classList.toggle('active', mode === 'platformer');
-            
-            const workingDataset = currentMode === 'classic' ? classicDemons : platformerDemons;
-            selectedLevel = workingDataset[0] || null;
-            
-            renderFilteredList();
-            renderShowcaseView();
-        };
+            const targetedList = levelData[currentListType].map((level, positionIndex) => ({
+                globalRank: positionIndex + 1,
+                data: level
+            }));
 
-        function renderFilteredList() {
-            const container = document.getElementById('levels-list-container');
-            container.innerHTML = '';
-            
-            const currentArray = currentMode === 'classic' ? classicDemons : platformerDemons;
-            const filtered = currentArray.filter(lvl => lvl.name.toLowerCase().includes(searchQuery.toLowerCase()));
+            const filteredLevels = targetedList.filter(item => 
+                item.data.name.toLowerCase().includes(searchQuery)
+            );
 
-            filtered.forEach(lvl => {
+            filteredLevels.forEach((item) => {
                 const div = document.createElement('div');
-                const isSelected = selectedLevel && selectedLevel.name === lvl.name && selectedLevel.rank === lvl.rank;
-                div.className = `list-item ${isSelected ? 'selected' : ''}`;
-                div.innerHTML = `
-                    <div class="item-rank">#${lvl.rank}</div>
-                    <div>
-                        <div class="item-name">${lvl.name}</div>
-                    </div>
-                `;
-                div.addEventListener('click', () => {
-                    selectedLevel = lvl;
-                    renderFilteredList();
-                    renderShowcaseView();
-                });
-                container.appendChild(div);
+                div.className = `level-item ${activeLevel && activeLevel.name === item.data.name ? 'active' : ''}`;
+                div.innerHTML = `<span class="level-rank">#${item.globalRank}</span><span class="level-name">${item.data.name}</span>`;
+                div.onclick = () => selectLevel(item.data);
+                listContainer.appendChild(div);
             });
         }
 
-        function renderShowcaseView() {
-            const panel = document.getElementById('showcase-view-panel');
-            if (!selectedLevel) {
-                panel.innerHTML = `<p style="color: var(--muted-color); text-align:center; margin-top:50px;">No levels found.</p>`;
-                return;
+        function selectLevel(level) {
+            activeLevel = level;
+            renderList();
+
+            document.getElementById('levelTitle').innerText = level.name;
+            document.getElementById('levelID').innerText = level.id;
+            document.getElementById('levelAuthor').innerText = level.author;
+            document.getElementById('levelVerifier').innerText = level.verifier;
+            document.getElementById('levelPoints').innerText = 0;
+
+            const videoWrapper = document.getElementById('videoWrapper');
+            if (level.video) {
+                videoWrapper.innerHTML = `<iframe src="${level.video}" allowfullscreen></iframe>`;
+            } else {
+                videoWrapper.innerHTML = `<div class="no-video">No video available</div>`;
             }
-
-            // Checks if a video link is present, otherwise swaps out the player for a placeholder string block
-            const mediaBlock = selectedLevel.video 
-                ? `<div class="video-wrapper">
-                       <iframe src="${selectedLevel.video}" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                   </div>`
-                : `<div class="no-video-placeholder">No video available for this level</div>`;
-
-            panel.innerHTML = `
-                <div class="level-title-row">
-                    <div class="level-main-info">
-                        <h2>${selectedLevel.name}</h2>
-                    </div>
-                </div>
-                ${mediaBlock}
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">List Points</div>
-                        <div class="stat-value points-val">${selectedLevel.points}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Published by</div>
-                        <div class="stat-value">${selectedLevel.publisher}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Verified by</div>
-                        <div class="stat-value">${selectedLevel.verifier}</div>
-                    </div>
-                </div>
-            `;
         }
 
-        document.getElementById('list-search').addEventListener('input', (e) => {
-            searchQuery = e.target.value;
-            renderFilteredList();
-        });
+        let toastTimeout;
+        function copyToClipboard(text, element) {
+            if (!text || text === "-" || text === "") return;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalOpacity = element.style.opacity || "1";
+                element.style.opacity = "0.4";
+                setTimeout(() => { element.style.opacity = originalOpacity; }, 150);
 
-        // Initialize state viewports
-        setListMode('classic');
+                const toast = document.getElementById('copyToast');
+                toast.classList.add('show');
+                
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
 
-        // --- THEME SWAP IMPLEMENTATION ---
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('click', () => {
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            themeToggle.textContent = isDark ? 'Dark Mode' : 'Light Mode';
-        });
-
-        // --- USER ACCOUNT ACCESS HANDLING (FIREBASE AUTH) ---
-        const authModal = document.getElementById('auth-modal');
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const userDisplay = document.getElementById('user-display');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const authForm = document.getElementById('auth-form');
-        const toggleAuthTypeBtn = document.getElementById('toggle-auth-type');
-        const modalTitle = document.getElementById('modal-title');
-        const submitAuthBtn = document.getElementById('submit-auth-btn');
-        const usernameGroup = document.getElementById('username-group');
-
-        let isLoginMode = true;
-
-        loginBtn.addEventListener('click', () => authModal.style.display = 'flex');
-        closeModalBtn.addEventListener('click', () => authModal.style.display = 'none');
-
-        toggleAuthTypeBtn.addEventListener('click', () => {
-            isLoginMode = !isLoginMode;
-            if (isLoginMode) {
-                modalTitle.textContent = 'Login';
-                submitAuthBtn.textContent = 'Sign In';
-                toggleAuthTypeBtn.textContent = "Don't have an account? Register";
-                usernameGroup.style.display = 'none';
-                document.getElementById('auth-username').removeAttribute('required');
+        function openAuthModal() {
+            if (auth.currentUser) {
+                auth.signOut();
             } else {
-                modalTitle.textContent = 'Register Account';
-                submitAuthBtn.textContent = 'Create Account';
-                toggleAuthTypeBtn.textContent = "Already have an account? Login";
-                usernameGroup.style.display = 'block';
-                document.getElementById('auth-username').setAttribute('required', 'true');
+                document.getElementById('authModal').style.display = 'flex';
+                toggleAuthState(true);
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function toggleAuthState(showLogin) {
+            document.getElementById('loginState').classList.toggle('hidden', !showLogin);
+            document.getElementById('registerState').classList.toggle('hidden', showLogin);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.querySelector('.toggle-btn').innerText = isLight ? 'Dark Mode' : 'Light Mode';
+        }
+
+        auth.onAuthStateChanged(user => {
+            const loginBtn = document.getElementById('loginBtn');
+            const userDisplay = document.getElementById('userDisplay');
+            
+            if (user) {
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    const username = doc.exists ? doc.data().username : "Player";
+                    userDisplay.innerText = username;
+                    userDisplay.classList.remove('hidden');
+                    loginBtn.textContent = "Logout";
+                });
+            } else {
+                userDisplay.classList.add('hidden');
+                loginBtn.textContent = "Login/Register";
             }
         });
 
-        authForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            const username = document.getElementById('auth-username').value.trim();
+        function handleRegister() {
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
 
-            try {
-                if (isLoginMode) {
-                    await signInWithEmailAndPassword(auth, email, password);
-                } else {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
-                    await updateProfile(user, { displayName: username });
-                    await setDoc(doc(db, "players", user.uid), {
+            if(!username || !email || !password) return alert("Fill out all fields.");
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(cred => {
+                    return db.collection('users').doc(cred.user.uid).set({
                         username: username,
                         points: 0
                     });
+                })
+                .then(() => {
+                    closeAuthModal();
+                })
+                .catch(err => alert(err.message));
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => closeAuthModal())
+                .catch(err => alert(err.message));
+        }
+
+        function loadLeaderboard() {
+            const tableBody = document.getElementById('leaderboardData');
+            tableBody.innerHTML = '<tr><td colspan="3">Loading rankings...</td></tr>';
+
+            db.collection('users').orderBy('points', 'desc').get().then(snapshot => {
+                tableBody.innerHTML = '';
+                if(snapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="3">No players registered yet.</td></tr>';
+                    return;
                 }
-                authForm.reset();
-                authModal.style.display = 'none';
-            } catch (error) {
-                alert(error.message);
-            }
-        });
-
-        logoutBtn.addEventListener('click', () => signOut(auth));
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loginBtn.style.display = 'none';
-                userDisplay.style.display = 'inline';
-                logoutBtn.style.display = 'inline';
-                userDisplay.textContent = user.displayName || user.email;
-            } else {
-                loginBtn.style.display = 'inline';
-                userDisplay.style.display = 'none';
-                logoutBtn.style.display = 'none';
-                userDisplay.textContent = '';
-            }
-        });
-
-        // --- DYNAMIC DATABASE LEADERBOARD SYNC (FIRESTORE) ---
-        const leaderboardContainer = document.getElementById('leaderboard-container');
-        const leaderboardQuery = query(collection(db, "players"), orderBy("points", "desc"), limit(50));
-
-        onSnapshot(leaderboardQuery, (snapshot) => {
-            leaderboardContainer.innerHTML = '';
-            if (snapshot.empty) {
-                leaderboardContainer.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--muted-color); padding: 24px;">No placement records found. Keep climbing!</td></tr>`;
-                return;
-            }
-
-            let currentRank = 1;
-            snapshot.forEach((doc) => {
-                const playerData = doc.data();
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: 600; color: var(--muted-color);">#${currentRank}</td>
-                    <td style="font-weight: 500;">${playerData.username || "Anonymous Player"}</td>
-                    <td style="text-align: right; font-weight: 600;">${playerData.points || 0}</td>
-                `;
-                leaderboardContainer.appendChild(tr);
-                currentRank++;
+                snapshot.docs.forEach((doc, index) => {
+                    const data = doc.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>#${index + 1}</strong></td>
+                        <td>${data.username}</td>
+                        <td>${data.points || 0}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
             });
-        }, (error) => {
-            console.error("Leaderboard loading error: ", error);
-            leaderboardContainer.innerHTML = `<tr><td colspan="3" style="text-align: center; color: red; padding: 24px;">Error syncing live profiles. Check your database settings.</td></tr>`;
-        });
+        }
+
+        renderList();
     </script>
 </body>
 </html>
