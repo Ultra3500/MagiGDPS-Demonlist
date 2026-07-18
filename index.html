@@ -85,7 +85,7 @@
 
         .nav-tabs {
             display: flex;
-            gap: 0.4rem; /* Brought tabs closer together */
+            gap: 0.4rem;
         }
 
         .nav-btn {
@@ -430,7 +430,7 @@
     <nav class="navbar">
         <div class="nav-left-group">
             <div class="brand-container">
-                <span class="version-tag">Ver 2.0</span>
+                <span class="version-tag">Ver 2.01</span>
                 <div class="logo">MagiGDPS Demonlist</div>
             </div>
             <div class="nav-tabs">
@@ -459,7 +459,7 @@
         <div class="showcase-panel">
             <h2 id="levelTitle" style="text-transform: uppercase;">THE HELL ABYSS</h2>
             <div class="video-container" id="videoWrapper">
-                <iframe src="https://www.youtube-nocookie.com/embed/S_B7_bY95Zg" allowfullscreen></iframe>
+                <iframe src="https://www.youtube-nocookie.com/embed/I1nONp__jb0" allowfullscreen></iframe>
             </div>
             
             <div class="level-info-cards">
@@ -558,11 +558,11 @@
 
         const levelData = {
             classic: [
-                { id: "253", name: "THE HELL ABYSS", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/S_B7_bY95Zg" },
-                { id: "245", name: "ISOLATION", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/eorFm5S_6w0" },
-                { id: "294", name: "Sparkler", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/S0wMv_RstB8" },
-                { id: "159", name: "Silent Shade", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/Lnd0h_vVv4c" },
-                { id: "188", name: "Super Clubstep", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/H88KqZ6x7C0" },
+                { id: "253", name: "THE HELL ABYSS", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/I1nONp__jb0" },
+                { id: "245", name: "ISOLATION", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/3TyKX97t00E" },
+                { id: "294", name: "Sparkler", author: "NevisMevis", verifier: "NevisMevis", video: "" },
+                { id: "159", name: "Silent Shade", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "" },
+                { id: "188", name: "Super Clubstep", author: "PolarRice", verifier: "PolarRice", video: "" },
                 { id: "334", name: "Artace", author: "Danil12", verifier: "Danil12", video: "" },
                 { id: "195", name: "reminds me of rain", author: "Fish", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/CxiyTVBLMVY" },
                 { id: "215", name: "Society", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/yuIdpGBQ-vI" },
@@ -572,7 +572,7 @@
             platformer: [
                 { id: "260", name: "Code M", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/9bOflrj5CUE" },
                 { id: "172", name: "Only Up", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "" },
-                { id: "274", name: "The Five", author: "UltraGamer3500", verifier: "UltraGamer3500", video: "https://www.youtube-nocookie.com/embed/yIi1zT0yxoU" }
+                { id: "274", name: "The Five", author: "NevisMevis", verifier: "NevisMevis", video: "" }
             ]
         };
 
@@ -589,7 +589,6 @@
 
         function handleSubmitRecordClick() {
             if (!auth.currentUser) {
-                // Modified: Now forces directly open into the LOGIN module panel template layout
                 document.getElementById('authModal').style.display = 'flex';
                 toggleAuthState(true);
             }
